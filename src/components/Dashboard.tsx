@@ -37,7 +37,7 @@ export const Dashboard: React.FC = () => {
       setIsRefreshing(true);
       // Simulate fetching new data by generating a fresh set
       setTimeout(() => {
-        setData(generateMockData(500));
+        setData(generateMockData(800));
         setIsRefreshing(false);
       }, 800); // Fake network delay
     }, refreshInterval * 1000);

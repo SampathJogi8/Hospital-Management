@@ -39,8 +39,8 @@ export const computeMetrics = (data: PatientRecord[]) => {
     ? resolvedCases.reduce((acc, curr) => acc + (curr.Resolution_Time || 0), 0) / resolvedCases.length 
     : 0;
     
-  // Mock bed occupancy (assuming 200 beds total)
-  const totalBeds = 200;
+  // Mock bed occupancy (assuming 230 beds total)
+  const totalBeds = 230;
   const bedOccupancy = Math.min(100, Math.round((activeCases / totalBeds) * 100));
 
   const todayStr = new Date().toISOString().split('T')[0];

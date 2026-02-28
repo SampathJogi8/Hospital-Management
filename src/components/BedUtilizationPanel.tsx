@@ -7,7 +7,7 @@ export const BedUtilizationPanel: React.FC<{ data: PatientRecord[] }> = ({ data 
   const stats = useMemo(() => {
     const capacities = {
       ICU: 30,
-      General: 120,
+      General: 150,
       Emergency: 50
     };
 
@@ -28,7 +28,7 @@ export const BedUtilizationPanel: React.FC<{ data: PatientRecord[] }> = ({ data 
       ? resolvedCases.reduce((acc, curr) => acc + (curr.Resolution_Time || 0), 0) / resolvedCases.length / 24 // in days
       : 0;
 
-    const turnoverRate = resolvedCases.length / 200; // Total beds
+    const turnoverRate = resolvedCases.length / 230; // Total beds
 
     const chartData = [
       { 

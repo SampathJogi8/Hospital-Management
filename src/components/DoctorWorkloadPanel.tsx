@@ -46,9 +46,9 @@ export const DoctorWorkloadPanel: React.FC<{ data: PatientRecord[] }> = ({ data 
       
       let status: 'Overloaded' | 'Optimal' | 'Underutilized' = 'Optimal';
 
-      if (s.activeCases > 8) {
+      if (s.activeCases > 18) {
         status = 'Overloaded';
-      } else if (s.activeCases < 3) {
+      } else if (s.activeCases < 12) {
         status = 'Underutilized';
       }
 
@@ -66,7 +66,7 @@ export const DoctorWorkloadPanel: React.FC<{ data: PatientRecord[] }> = ({ data 
     
     processedStats.forEach(doc => {
       if (doc.status === 'Overloaded') {
-        const excess = Math.round(((doc.activeCases - 8) / 8) * 100);
+        const excess = Math.round(((doc.activeCases - 18) / 18) * 100);
         if (underutilizedDoctors.length > 0) {
           const target = underutilizedDoctors[0].name;
           doc.suggestion = `${doc.name} exceeds optimal capacity by ${excess}%. Suggest reassigning new cases to ${target}.`;

@@ -11,7 +11,8 @@ export const ResolutionLineChart: React.FC<{ data: PatientRecord[] }> = ({ data 
     const dates: Record<string, { 
       totalTime: number, count: number, 
       criticalTime: number, criticalCount: number,
-      nonCriticalTime: number, nonCriticalCount: number 
+      nonCriticalTime: number, nonCriticalCount: number,
+      timestamp: number
     }> = {};
     
     const depts: Record<string, { totalTime: number, count: number }> = {};
@@ -19,8 +20,9 @@ export const ResolutionLineChart: React.FC<{ data: PatientRecord[] }> = ({ data 
     data.forEach(d => {
       if (d.Resolution_Time !== null && d.Discharge_Date) {
         // Trend Data
-        const date = format(parseISO(d.Discharge_Date), 'MMM dd');
-        if (!dates[date]) dates[date] = { totalTime: 0, count: 0, criticalTime: 0, criticalCount: 0, nonCriticalTime: 0, nonCriticalCount: 0 };
+        const parsedDate = parseISO(d.Discharge_Date);
+        const date = format(parsedDate, 'MMM dd');
+        if (!dates[date]) dates[date] = { totalTime: 0, count: 0, criticalTime: 0, criticalCount: 0, nonCriticalTime: 0, nonCriticalCount: 0, timestamp: parsedDate.getTime() };
         
         dates[date].totalTime += d.Resolution_Time;
         dates[date].count += 1;
@@ -46,8 +48,9 @@ export const ResolutionLineChart: React.FC<{ data: PatientRecord[] }> = ({ data 
         avgTime: stats.count > 0 ? Math.round(stats.totalTime / stats.count) : 0,
         criticalAvg: stats.criticalCount > 0 ? Math.round(stats.criticalTime / stats.criticalCount) : 0,
         nonCriticalAvg: stats.nonCriticalCount > 0 ? Math.round(stats.nonCriticalTime / stats.nonCriticalCount) : 0,
+        timestamp: stats.timestamp
       }))
-      .sort((a, b) => new Date(`2024 ${a.date}`).getTime() - new Date(`2024 ${b.date}`).getTime());
+      .sort((a, b) => a.timestamp - b.timestamp);
 
     // Calculate 7-day moving average
     const smoothedData = rawData.map((day, index, arr) => {

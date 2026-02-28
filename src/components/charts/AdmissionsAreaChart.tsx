@@ -5,24 +5,25 @@ import { format, parseISO } from 'date-fns';
 
 export const AdmissionsAreaChart: React.FC<{ data: PatientRecord[] }> = ({ data }) => {
   const chartData = useMemo(() => {
-    const dates: Record<string, { admissions: number, discharges: number }> = {};
+    const dates: Record<string, { admissions: number, discharges: number, timestamp: number }> = {};
     
     data.forEach(d => {
-      const admissionDate = format(parseISO(d.Admission_Date), 'MMM dd');
-      if (!dates[admissionDate]) dates[admissionDate] = { admissions: 0, discharges: 0 };
+      const parsedAdmission = parseISO(d.Admission_Date);
+      const admissionDate = format(parsedAdmission, 'MMM dd');
+      if (!dates[admissionDate]) dates[admissionDate] = { admissions: 0, discharges: 0, timestamp: parsedAdmission.getTime() };
       dates[admissionDate].admissions += 1;
 
       if (d.Discharge_Date) {
-        const dischargeDate = format(parseISO(d.Discharge_Date), 'MMM dd');
-        if (!dates[dischargeDate]) dates[dischargeDate] = { admissions: 0, discharges: 0 };
+        const parsedDischarge = parseISO(d.Discharge_Date);
+        const dischargeDate = format(parsedDischarge, 'MMM dd');
+        if (!dates[dischargeDate]) dates[dischargeDate] = { admissions: 0, discharges: 0, timestamp: parsedDischarge.getTime() };
         dates[dischargeDate].discharges += 1;
       }
     });
 
     return Object.entries(dates)
       .map(([date, counts]) => ({ date, ...counts }))
-      // Sort by date string (simplified, assumes same year for mock data)
-      .sort((a, b) => new Date(`2024 ${a.date}`).getTime() - new Date(`2024 ${b.date}`).getTime())
+      .sort((a, b) => a.timestamp - b.timestamp)
       .slice(-14); // Last 14 days
   }, [data]);
 

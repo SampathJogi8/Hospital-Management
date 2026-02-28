@@ -8,7 +8,7 @@ export const SmartAlerts: React.FC<{ data: PatientRecord[] }> = ({ data }) => {
     const activeCases = data.filter(d => d.Status === 'Admitted' || d.Status === 'In Treatment');
     
     // Bed occupancy > 90%
-    const totalBeds = 200;
+    const totalBeds = 230;
     const occupancy = (activeCases.length / totalBeds) * 100;
     if (occupancy > 90) {
       newAlerts.push({
@@ -23,7 +23,7 @@ export const SmartAlerts: React.FC<{ data: PatientRecord[] }> = ({ data }) => {
     // Emergency spike detection
     const today = new Date().toISOString().split('T')[0];
     const emergencyToday = data.filter(d => d.Department === 'Emergency' && d.Admission_Date.startsWith(today)).length;
-    if (emergencyToday > 15) { // Threshold for mock data
+    if (emergencyToday > 25) { // Threshold for mock data
       newAlerts.push({
         id: 'emergency-spike',
         type: 'warning',
@@ -38,7 +38,7 @@ export const SmartAlerts: React.FC<{ data: PatientRecord[] }> = ({ data }) => {
     activeCases.forEach(d => {
       doctorWorkload[d.Doctor_Name] = (doctorWorkload[d.Doctor_Name] || 0) + 1;
     });
-    const overloadedDoctors = Object.entries(doctorWorkload).filter(([_, count]) => count > 8); // Threshold
+    const overloadedDoctors = Object.entries(doctorWorkload).filter(([_, count]) => count > 18); // Threshold
     if (overloadedDoctors.length > 0) {
       newAlerts.push({
         id: 'doctor-workload',
@@ -54,7 +54,7 @@ export const SmartAlerts: React.FC<{ data: PatientRecord[] }> = ({ data }) => {
     activeCases.forEach(d => {
       deptWorkload[d.Department] = (deptWorkload[d.Department] || 0) + 1;
     });
-    const overloadedDepts = Object.entries(deptWorkload).filter(([_, count]) => count > 25); // Threshold
+    const overloadedDepts = Object.entries(deptWorkload).filter(([_, count]) => count > 45); // Threshold
     if (overloadedDepts.length > 0) {
       newAlerts.push({
         id: 'dept-capacity',
