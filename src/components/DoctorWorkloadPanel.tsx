@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { PatientRecord } from '../types';
 import { Users, Clock, Activity, AlertCircle, Calendar } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 
 export const DoctorWorkloadPanel: React.FC<{ data: PatientRecord[] }> = ({ data }) => {
   const doctorStats = useMemo(() => {
@@ -82,6 +83,12 @@ export const DoctorWorkloadPanel: React.FC<{ data: PatientRecord[] }> = ({ data 
     return processedStats;
   }, [data]);
 
+  const getStatusColor = (status: string) => {
+    if (status === 'Overloaded') return '#ef4444'; // red-500
+    if (status === 'Underutilized') return '#10b981'; // emerald-500
+    return '#3b82f6'; // blue-500
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -91,7 +98,39 @@ export const DoctorWorkloadPanel: React.FC<{ data: PatientRecord[] }> = ({ data 
         </div>
       </div>
       
-      <div className="overflow-y-auto flex-1 p-6 space-y-6 max-h-[500px]">
+      <div className="p-6 border-b border-gray-100 bg-gray-50/30">
+        <div className="flex items-center justify-center gap-6 mb-6 text-xs font-medium text-gray-600">
+          <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div> Overloaded</span>
+          <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-500"></div> Optimal</span>
+          <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Underutilized</span>
+        </div>
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={doctorStats} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6b7280' }} tickMargin={10} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6b7280' }} tickMargin={10} />
+              <Tooltip 
+                cursor={{ fill: '#f3f4f6' }}
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+              />
+              <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+              <Bar dataKey="dailyCases" name="Daily Cases" radius={[4, 4, 0, 0]} maxBarSize={30}>
+                {doctorStats.map((entry, index) => (
+                  <Cell key={`cell-daily-${index}`} fill={getStatusColor(entry.status)} fillOpacity={0.5} />
+                ))}
+              </Bar>
+              <Bar dataKey="weeklyCases" name="Weekly Cases" radius={[4, 4, 0, 0]} maxBarSize={30}>
+                {doctorStats.map((entry, index) => (
+                  <Cell key={`cell-weekly-${index}`} fill={getStatusColor(entry.status)} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="overflow-y-auto flex-1 p-6 space-y-6 max-h-[400px]">
         {doctorStats.map((doc, idx) => (
           <div key={idx} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-colors">
             <div className="flex items-start justify-between mb-3">
