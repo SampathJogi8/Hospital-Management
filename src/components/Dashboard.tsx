@@ -25,7 +25,7 @@ export const Dashboard: React.FC = () => {
     priority: 'All'
   });
   
-  const [refreshInterval, setRefreshInterval] = useState<number>(0); // 0 means off
+  const [refreshInterval, setRefreshInterval] = useState<number>(5); // 5 seconds by default
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<PatientRecord | null>(null);
 
@@ -109,6 +109,7 @@ export const Dashboard: React.FC = () => {
                 onChange={(e) => setRefreshInterval(Number(e.target.value))}
               >
                 <option value={0}>Auto-refresh: Off</option>
+                <option value={5}>Every 5s</option>
                 <option value={10}>Every 10s</option>
                 <option value={30}>Every 30s</option>
                 <option value={60}>Every 60s</option>
